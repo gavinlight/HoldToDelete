@@ -6,18 +6,18 @@ new HoldToDelete(
 		height: '15px',
 		color: '#00FF00',
 		seconds: 1,
-		timeout: 0.3
+		timeout: 0.5
 	}
 );
 
 new HoldToDelete(
 	'button.advanced-options',
 	{
+		remove_feedback: false,
 		css: {
 			'opacity': '0.4',
 			'box-shadow': '3px 3px 3px rgba(0,0,0,0.5)'
-		},
-		remove_feedback: false,
+		}
 	}
 );
 

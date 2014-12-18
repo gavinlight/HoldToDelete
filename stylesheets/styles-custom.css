@@ -2,9 +2,11 @@ button {
 	font-size: 1.2em;
 	padding: 20px;
 	cursor: pointer;
-	margin: 20px auto;
-	display: block;
+	margin: 0 0 20px;
+	display: inline-block;
 	border: 0;
+	background-color: #39c;
+	color: white;
 }
 
 button:focus, button:active {

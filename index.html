@@ -1,35 +1,35 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>HoldToDelete by gavinlight</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>HoldToDelete by gavinlight</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <link rel="stylesheet" href="stylesheets/styles-custom.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	<link rel="stylesheet" href="stylesheets/styles.css">
+	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<link rel="stylesheet" href="stylesheets/styles-custom.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>HoldToDelete</h1>
-        <p>A Javascript library that provides all users with an easy way to easily perform this everyday task without shifting their focus</p>
+	<div class="wrapper">
+	  <header>
+		<h1>HoldToDelete</h1>
+		<p>A Javascript library that provides all users with an easy way to easily perform this everyday task without shifting their focus</p>
 
-        <p class="view"><a href="https://github.com/gavinlight/HoldToDelete">View the Project on GitHub <small>gavinlight/HoldToDelete</small></a></p>
+		<p class="view"><a href="https://github.com/gavinlight/HoldToDelete">View the Project on GitHub <small>gavinlight/HoldToDelete</small></a></p>
 
 
-        <ul>
-          <li><a href="https://github.com/gavinlight/HoldToDelete/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/gavinlight/HoldToDelete/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/gavinlight/HoldToDelete">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h2>
+		<ul>
+		  <li><a href="https://github.com/gavinlight/HoldToDelete/zipball/master">Download <strong>ZIP File</strong></a></li>
+		  <li><a href="https://github.com/gavinlight/HoldToDelete/tarball/master">Download <strong>TAR Ball</strong></a></li>
+		  <li><a href="https://github.com/gavinlight/HoldToDelete">View On <strong>GitHub</strong></a></li>
+		</ul>
+	  </header>
+	  <section>
+		<h2>
 <a id="before-you-start" class="anchor" href="#before-you-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Before you start</h2>
 
 <h3>
@@ -40,19 +40,16 @@
 <h3>
 <a id="browser-support" class="anchor" href="#browser-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Browser support</h3>
 
-<p>HoldToDelete currently works in all modern browsers and IE9 and above. 
-Still found a browser HoldToDelete fails to work in? Create an issue at <a href="https://github.com/gavinlight/HoldToDelete/issues/new">https://github.com/gavinlight/HoldToDelete/issues/new</a>.</p>
+<p>HoldToDelete currently works in all modern browsers and IE9 and above.</p>
 
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>Download the master branch and insert the HoldToDelete file before your own Javascript file:</p>
+<p>Download the files from master branch and insert the HoldToDelete file before your own Javascript file:</p>
 
 <pre><code>&lt;script type="text/javascript" src="path/to/HoldToDelete.min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="path/to/yourjs.js"&gt;&lt;/script&gt;
 </code></pre>
-
-<p><strong>Note:</strong> HoldToDelete currently doesn't support a dependency manager yet.</p>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
@@ -60,34 +57,185 @@ Still found a browser HoldToDelete fails to work in? Create an issue at <a href=
 <h3>
 <a id="simple" class="anchor" href="#simple" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple</h3>
 
+<p>Simple usage only requires a single parameter, the actual element. This can either be:</p>
+
+<ul>
+  <li>a simple string</li>
+  <li>an actual DOM element (node type)</li>
+  <li>an object of actual DOM elements (jQuery style)</li>
+</ul>
+
+<pre><code>new HoldToDelete('button');
+</code></pre>
+
 <button class="simple">Simple usage</button>
+
+<p><strong>Note:</strong> Be careful with generic classnames or often used elements in this first parameter. HoldToDelete will be available for all the elements it will find.</p>
+
+<hr>
+
+<h3>Options</h3>
+
+<p>If you want to customize the event to your liking you can use the second parameter. This second parameter should always be an object.</p>
+
+<pre><code>new HoldToDelete(
+  'button',
+  {
+    height: '15px',    // (String with px afterwards) The height of the feedback element 
+    color: '#00FF00',  // (String, hex, rgb, rgba or name) The color of the feedback element
+    seconds: 1,        // (Number) The timespan of the actual event
+    timeout: 0.5       // (Number) The timeout before the feedback element goes away
+  }
+);
+</code></pre>
 
 <button class="simple-options">Options</button>
 
+<hr>
+
+<h3>Advanced options</h3>
+
+<p>In addition to the standard customizations, HoldToDelete also offers two advanced customization options. These are also specified in the object that is the second parameter</p>
+
+<pre><code>new HoldToDelete(
+  'button',
+  {
+    remove_feedback: false,  // (Boolean) Specify wether the feedback element should be removed or not 
+    css: {		     // (Object) The additional styling for the feedback element
+      'opacity': '0.4',
+      'box-shadow': '3px 3px 3px rgba(0,0,0,0.5)'
+    }
+  }
+);
+</code></pre>
+
 <button class="advanced-options">Advanced options</button>
+
+<hr>
+
+<h3>Standard values</h3>
+
+<p>Below a list of the standard option values HoldToDelete uses when they are not overwritten.</p>
+
+<pre><code>var options = {
+  height: '5px',
+  color: '#FF0000',
+  css: {},
+  seconds: 3,
+  timeout: 0,
+  remove_feedback: true
+}
+</code></pre>
+
+<hr>
+
+<h3>Border radius</h3>
+
+<p>The feedback element adjusts to the border radius of your element so it will always look good.</p>
 
 <button class="border-radius">Border radius</button>
 
+<hr>
+
+<h2>
+<a id="custom-events" class="anchor" href="#custom-events" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom events</h2>
+
+<h3>Standard usage</h3>
+
+<p>If you want to run your custom code at certain key moment during the event you can do so by using the custom events that HoldToDelete provides. These custom events will onyl be called when the elements that are initialized by the corrisponding instance are clicked. You can use the 'on' function on your earlier created instance and pass two parameters to this function: </p>
+
+<ul>
+	<li>The actual event (in this case 'holdtodelete_started')</li>
+	<li>The callback function</li>
+</ul>
+
+<pre><code>var remove_handler = new HoldToDelete('button');
+remove_handler.on('holdtodelete_event', function(){
+  // Your code goes here
+});
+</code></pre>
+
+<p><strong>Note:</strong> Give your instances (in this case 'remove_handler_standard') unique names if you are going to use these custom events to avoid unwanted results.</p>
+
+<p>Every custom event provides you with the clicked reference element and the corrisponding feedback element. You can use these like so:</p>
+
+<pre><code>var remove_handler_standard = new HoldToDelete('button');
+remove_handler_standard.on('holdtodelete_started', function(reference_element, feedback_element){
+  console.log('Reference element: ', reference_element);
+  console.log('Feedback element:', feedback_element);
+});
+</code></pre>
+
 <button class="custom-event-standard">Custom event standard</button>
+
+<hr>
+
+<h3>Event started</h3>
+
+<p>This custom event will be called when the user clicks on the element.</p>
+
+<pre><code>var remove_handler_started = new HoldToDelete('button.custom-event-started');
+remove_handler_started.on('holdtodelete_started', function(reference_element, feedback_element){
+  console.log('Custom event: Started');
+});</code></pre>
 
 <button class="custom-event-started">Custom event started</button>
 
+<hr>
+
+<h3>Event running</h3>
+
+<p>This custom event will be called every millisecond the actual event is running until before the timeout.</p>
+
+<pre><code>var remove_handler_running = new HoldToDelete('button.custom-event-running');
+remove_handler_running.on('holdtodelete_running', function(reference_element, feedback_element){
+  console.log('Custom event: Running');
+});</code></pre>
+
 <button class="custom-event-running">Custom event running</button>
+
+<hr>
+
+<h3>Event before timeout</h3>
+
+<p>This custom event will be called when the actual event is done and the timeout started.</p>
+
+<pre><code>var remove_handler_before_timeout = new HoldToDelete('button.custom-event-before-timeout');
+remove_handler_before_timeout.on('holdtodelete_before_timeout', function(reference_element, feedback_element){
+  console.log('Custom event: Before timeout');
+});</code></pre>
 
 <button class="custom-event-before-timeout">Custom event before-timeout</button>
 
-<button class="custom-event-finished">Custom event finished</button>
+<hr>
 
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/gavinlight">gavinlight</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    <!--<script src="javascripts/HoldToDelete.min.js"></script>-->
-    <script src="javascripts/HoldToDelete.min.js"></script>
-    <script src="javascripts/main-custom.js"></script>
-    
+<h3>Event finished</h3>
+
+<p>This custom event will be called when the actual event and the timeout are done.</p>
+
+<pre><code>var remove_handler_finished = new HoldToDelete('button.custom-event-finished');
+remove_handler_finished.on('holdtodelete_finished', function(reference_element, feedback_element){
+	console.log('Custom event: Finished');
+});</code></pre>
+
+<button class="custom-event-finished">Custom event before-timeout</button>
+
+<p>This event can along with the 'remove_feedback' option set to 'false' give you the option to use anmite and hide the reference and feedback element.</p>
+
+<hr>
+
+<p>Found a bug or something that needs to be fixed? Create an issue at <a href="https://github.com/gavinlight/HoldToDelete/issues/new">https://github.com/gavinlight/HoldToDelete/issues/new</a>.</p>
+
+	  </section>
+	  <footer>
+		<p>This project is maintained by <a href="https://github.com/gavinlight">gavinlight</a></p>
+		<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+	  </footer>
+	</div>
+	<script src="javascripts/scale.fix.js"></script>
+	<!--<script src="javascripts/HoldToDelete.min.js"></script>-->
+	<script src="javascripts/HoldToDelete.min.js"></script>
+	<script src="javascripts/main-custom.js"></script>
+	
   </body>
 </html>
