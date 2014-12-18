@@ -1,0 +1,16 @@
+button {
+	font-size: 1.2em;
+	padding: 20px;
+	cursor: pointer;
+	margin: 20px auto;
+	display: block;
+	border: 0;
+}
+
+button:focus, button:active {
+	outline: none;
+}
+
+button.border-radius {
+	border-radius: 15px;
+}
