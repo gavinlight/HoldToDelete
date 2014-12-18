@@ -9,7 +9,7 @@
         this.reference_element = false;
 
         if(this.dom_element){
-            this.registerClickEvents();
+            this.registerReferenceEvents();
         }
     }
 
@@ -79,9 +79,7 @@
             }
         }
 
-
-
-        return setup;
+        return options;
     }
 
     // Check if an object is a DOM element
@@ -93,8 +91,8 @@
         }
     }
 
-    // Register the click events
-    HoldToDelete.prototype.registerClickEvents = function(){
+    // Register the mouse events for the referece element
+    HoldToDelete.prototype.registerReferenceEvents = function(){
         for (var i = 0; i < this.dom_element.length; i++){
             var button = this.dom_element[i];
 
@@ -110,7 +108,7 @@
                 }
             }.bind(this));
 
-            button.addEventListener('mouseleave', function(event){
+            button.addEventListener('mouseout', function(event){
                 // Only call mouseUpHandler if the element the mouse left to is NOT the feedback element
                 if(event.toElement != this.selectFeedbackElement(event.srcElement)){
                     this.mouseUpHandler(event.srcElement);
@@ -123,13 +121,33 @@
         }
     }
 
+    // Register the mouse events for the feedback element
+    HoldToDelete.prototype.registerFeedbackEvents = function(feedback_element){
+        feedback_element.addEventListener('mouseup', function(event){
+            this.mouseUpHandler(this.reference_element);
+            
+            if( !this.anim_timer ){
+                this.removeReferenceElement();
+            }
+        }.bind(this));
+
+        feedback_element.addEventListener('mouseout', function(event){
+            if(event.toElement != this.reference_element){
+                this.mouseUpHandler(this.reference_element);
+                this.removeReferenceElement();
+            }
+        }.bind(this));
+    }
+
     // Handle the mouse down event. This is where the interval is being called, the feedback element is inserted and later also deleted
     HoldToDelete.prototype.mouseDownHandler = function(reference_element){
         this.setMouseupCheck(true);
         this.setReferenceElement(reference_element);
 
         var feedback_object = this.getFeedbackObject(this.reference_element);
-        var feedback_element = this.insertFeedbackElement(feedback_object);
+        var feedback_element = this.insertFeedbackElement(feedback_object, reference_element);
+
+        this.registerFeedbackEvents(feedback_element);
 
         this.callEvent('holdtodelete_started');
         
@@ -207,7 +225,6 @@
 
             feedback_element.style.cssText += 'top: ' + feedback_object.top + 'px;';
             feedback_element.style.cssText += 'left: ' + feedback_object.left + 'px;';
-            feedback_element.style.cssText += 'opacity: ' + feedback_object.opacity + ';'
 
         if(typeof feedback_object === 'object'){
             for(var css_rule in feedback_object.css){
@@ -236,7 +253,6 @@
         feedback_object.height = this.options.height;
         feedback_object.color = this.options.color;
         feedback_object.css = this.options.css;
-        feedback_object.opacity = this.options.opacity;
 
         feedback_object.width = element.offsetWidth;
         feedback_object.top = element.offsetTop;
@@ -246,8 +262,34 @@
             feedback_object.border_left_radius = window.getComputedStyle(element, null).getPropertyValue("border-top-left-radius");
             feedback_object.border_right_radius = window.getComputedStyle(element, null).getPropertyValue("border-top-right-radius");
         }
+        
+        // Subtract from the width and add to the left position where needed
+        if(feedback_object.hasOwnProperty('border_left_radius') && feedback_object.border_left_radius != '0px'){
+            feedback_object.width = Number(feedback_object.width) - Number((this.formatPixelstoNumber(feedback_object.border_left_radius) / 2));
+            feedback_object.left = Number(feedback_object.left) + Number((this.formatPixelstoNumber(feedback_object.border_left_radius) / 2));
+        }
+        if(feedback_object.hasOwnProperty('border_right_radius') && feedback_object.border_right_radius != '0px'){
+            feedback_object.width = Number(feedback_object.width) - Number((this.formatPixelstoNumber(feedback_object.border_right_radius) / 2));
+        }
 
         return feedback_object;
+    }
+
+    // Function to format number with px at the end into actual numbers
+    HoldToDelete.prototype.formatPixelstoNumber = function(pixel_number){
+        pixel_number = pixel_number.replace(/ /g,'')
+
+        if(pixel_number.slice(-2) === 'px'){
+            pixel_number = pixel_number.slice(0, -2);
+        }
+
+        return pixel_number;
+    }
+
+    // Remove the event listeners for the generated feedback element
+    HoldToDelete.prototype.removeFeedbackClicks = function(feedback_element){
+        feedback_element.removeEventListener('mouseup');
+        feedback_element.removeEventListener('mouseout');
     }
 
     // Remove the feedback element from the DOM
@@ -255,6 +297,7 @@
         var remove_element = this.selectFeedbackElement(button);
         
         if(remove_element){
+            this.removeFeedbackClicks(remove_element);
             remove_element.parentNode.removeChild(remove_element);
         }
     }
@@ -269,13 +312,15 @@
     // Call the callback on custom events for the users and give the users the current clicked element and the current feedback element
     HoldToDelete.prototype.on = function(event_name, callback) {
         if(document.addEventListener) {
+            for (var i = 0; i < this.dom_element.length; i++){
+                var button = this.dom_element[i];
 
-            document.addEventListener(
-                event_name,
-                function(){ callback(this.reference_element, this.selectFeedbackElement(this.reference_element)) }.bind(this),
-                false
-            );
-
+                button.addEventListener(
+                    event_name,
+                    function(){ callback(this.reference_element, this.selectFeedbackElement(this.reference_element)) }.bind(this),
+                    false
+                );
+            }
         }
     }
 
@@ -289,11 +334,13 @@
         ];
 
         if(document.createEvent && typeof event_name === 'string' && holdtodelete_events.indexOf(event_name) > -1) {
-
             var event = document.createEvent('Event');
             event.initEvent(event_name, true, true);
-            document.dispatchEvent(event);
-
+            
+            for (var i = 0; i < this.dom_element.length; i++){
+                var button = this.dom_element[i];
+                button.dispatchEvent(event);
+            }
         }
     }
 
