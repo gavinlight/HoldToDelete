@@ -219,7 +219,6 @@
 			if(event.which === 1 || event.which === 3){
 				return true;
 			}
-			return event.which === 1;
 		} else {
 			return event.button === 1;
 		}
