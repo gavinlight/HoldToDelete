@@ -1,0 +1,26 @@
+.holdtodelete_parent {
+	display: inline-block;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.holdtodelete_parent .holdtodelete_running {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.holdtodelete_parent .holdtodelete {
+	display: block;
+	position: absolute;
+	cursor: pointer;
+	border-top-style: solid;
+	border-top-width: 5px;
+	border-top-color: rgb(255, 0, 0);
+	top: 0;
+	left: 0;
+}

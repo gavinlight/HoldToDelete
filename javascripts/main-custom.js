@@ -3,8 +3,6 @@ new HoldToDelete('button.simple');
 new HoldToDelete(
 	'button.simple-options',
 	{
-		height: '15px',
-		color: '#00FF00',
 		seconds: 1,
 		timeout: 0.5
 	}
@@ -14,10 +12,8 @@ new HoldToDelete(
 	'button.advanced-options',
 	{
 		remove_feedback: false,
-		css: {
-			'opacity': '0.4',
-			'box-shadow': '3px 3px 3px rgba(0,0,0,0.5)'
-		}
+		class_name: 'custom_class',
+		border_radius_percentage: true
 	}
 );
 
@@ -47,4 +43,5 @@ remove_handler_before_timeout.on('holdtodelete_before_timeout', function(referen
 var remove_handler_finished = new HoldToDelete('button.custom-event-finished');
 remove_handler_finished.on('holdtodelete_finished', function(reference_element, feedback_element){
 	console.log('Custom event: Finished');
+	alert(1);
 });

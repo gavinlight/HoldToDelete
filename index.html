@@ -3,15 +3,20 @@
   <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+
 	<title>HoldToDelete by gavinlight</title>
 
 	<link rel="stylesheet" href="stylesheets/styles.css">
 	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<!--<link rel="stylesheet" href="stylesheets/HoldToDelete.css">-->
+	<link rel="stylesheet" href="stylesheets/HoldToDelete.min.css">
 	<link rel="stylesheet" href="stylesheets/styles-custom.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
 	<!--[if lt IE 9]>
-	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
+
   </head>
   <body>
 	<div class="wrapper">
@@ -40,12 +45,26 @@
 <h3>
 <a id="browser-support" class="anchor" href="#browser-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Browser support</h3>
 
-<p>HoldToDelete currently works in all modern browsers and IE9 and above. Mobile browsers are currently not yet supported.</p>
+<p>HoldToDelete currently works in all modern browsers, IE9 and above and has been tested on the mobile browsers listed below: </p>
+
+<ul>
+  <li>Google Chrome for Android</li>
+  <li>Stock Android browser</li>
+  <li>Opera for Android</li>
+  <li>Firefox for Android</li>
+  <li>Safari for iOS</li>
+  <li>Google Chrome for iOS</li>
+</ul>
+
 
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>Download the files from master branch and insert the HoldToDelete file before your own Javascript file:</p>
+<p>Download the files from master branch and insert the HoldToDeletes file before your own Javascript and CSS files:</p>
+
+<pre><code>&lt;link rel="stylesheet" type="text/css" href="path/to/HoldToDelete.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="path/to/yourcss.css"&gt;
+</code></pre>
 
 <pre><code>&lt;script type="text/javascript" src="path/to/HoldToDelete.min.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="path/to/yourjs.js"&gt;&lt;/script&gt;
@@ -70,7 +89,9 @@
 
 <button class="simple">Simple usage</button>
 
-<p><strong>Note:</strong> Be careful with generic classnames or often used elements in this first parameter. HoldToDelete will be available for all the elements it will find.</p>
+<p><strong>Note:</strong> HoldToDelete will put a wrapping element around the elements it finds.</p>
+
+<p><strong>Note:</strong> Be careful with generic classnames or often used elements in this first parameter. HoldToDelete will use all the elements it will find.</p>
 
 <hr>
 
@@ -81,10 +102,8 @@
 <pre><code>new HoldToDelete(
   'button',
   {
-    height: '15px',    // (String with px afterwards) The height of the feedback element 
-    color: '#00FF00',  // (String, hex, rgb, rgba or name) The color of the feedback element
-    seconds: 1,        // (Number) The timespan of the actual event
-    timeout: 0.5       // (Number) The timeout before the feedback element goes away
+    seconds: 1,  // (Number) The timespan of the actual event
+    timeout: 0.5 // (Number) The timeout before the feedback element goes away
   }
 );
 </code></pre>
@@ -100,13 +119,18 @@
 <pre><code>new HoldToDelete(
   'button',
   {
-    remove_feedback: false,  // (Boolean) Specify wether the feedback element should be removed or not 
-    css: {		     // (Object) The additional styling for the feedback element
-      'opacity': '0.4',
-      'box-shadow': '3px 3px 3px rgba(0,0,0,0.5)'
-    }
+    remove_feedback: false,  	   // (Boolean) Specify wether the feedback element should be removed or not
+    class_name: 'custom_class' 	   // (String) A custom class for the clicked element in the current instance
+    border_radius_percentage: true // (Boolean) Specify if the usage of border radius is done through percentages or not
   }
 );
+</code></pre>
+
+<pre><code>.custom_class {
+  background-color: white;
+  color: #39c;
+  border: 2px solid #39c;
+}
 </code></pre>
 
 <button class="advanced-options">Advanced options</button>
@@ -118,12 +142,11 @@
 <p>Below a list of the standard option values HoldToDelete uses when they are not overwritten.</p>
 
 <pre><code>var options = {
-  height: '5px',
-  color: '#FF0000',
-  css: {},
   seconds: 3,
   timeout: 0,
-  remove_feedback: true
+  remove_feedback: true,
+  border_radius_percentage: false,
+  class_name: ''
 }
 </code></pre>
 
@@ -134,6 +157,14 @@
 <p>The feedback element adjusts to the border radius of your element so it will always look good.</p>
 
 <button class="border-radius">Border radius</button>
+
+<hr>
+
+<h3>Control your element</h3>
+
+<p>HoldToDelete automatically adds the 'holdtodelete_running' class to the element that is being clicked. HoldToDelete also sets user-select to none based on this class so the user won't accidentally select the text while clicking the element. This class will get removed after the event is either disrupted or finished.</p>
+
+<p><strong>Note:</strong> It's best to always put the user-select to none while working with mobile browsers because of the way selecting text works in these browsers.</p>
 
 <hr>
 
@@ -150,7 +181,7 @@
 </ul>
 
 <pre><code>var remove_handler = new HoldToDelete('button');
-remove_handler.on('holdtodelete_event', function(){
+remove_handler.on('holdtodelete_started', function(){
   // Your code goes here
 });
 </code></pre>
@@ -218,7 +249,7 @@ remove_handler_finished.on('holdtodelete_finished', function(reference_element, 
 	console.log('Custom event: Finished');
 });</code></pre>
 
-<button class="custom-event-finished">Custom event before-timeout</button>
+<button class="custom-event-finished">Custom event finished</button>
 
 <p>This event can along with the 'remove_feedback' option set to 'false' give you the option to use anmite and hide the reference and feedback element.</p>
 
@@ -227,8 +258,9 @@ remove_handler_finished.on('holdtodelete_finished', function(reference_element, 
 <h2>Plans for the future</h2>
 
 <ul>
-	<li>Proper touch event support for mobile browsers</li>
+	<li>Support for even more mobile browsers</li>
 	<li>Better handling regarding border radiuses</li>
+	<li>Cross browser support regarding right click context menus</li>
 	<li>Customization regarding the placement of the feedback element</li>
 	<li>Customization regarding the reference element during the event</li>
 	<li>Better feedback regarding the 'holdtodelete_running' custom event</li>
@@ -245,7 +277,7 @@ remove_handler_finished.on('holdtodelete_finished', function(reference_element, 
 	  </footer>
 	</div>
 	<script src="javascripts/scale.fix.js"></script>
-	<!--<script src="javascripts/HoldToDelete.min.js"></script>-->
+	<!--<script src="javascripts/HoldToDelete.js"></script>-->
 	<script src="javascripts/HoldToDelete.min.js"></script>
 	<script src="javascripts/main-custom.js"></script>
 	
