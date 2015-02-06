@@ -43,5 +43,4 @@ remove_handler_before_timeout.on('holdtodelete_before_timeout', function(referen
 var remove_handler_finished = new HoldToDelete('button.custom-event-finished');
 remove_handler_finished.on('holdtodelete_finished', function(reference_element, feedback_element){
 	console.log('Custom event: Finished');
-	alert(1);
 });
