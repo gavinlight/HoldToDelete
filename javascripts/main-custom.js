@@ -13,7 +13,8 @@ new HoldToDelete(
 	{
 		remove_feedback: false,
 		class_name: 'custom_class',
-		border_radius_percentage: true
+		border_radius_percentage: true,
+		placement: 'bottom'
 	}
 );
 

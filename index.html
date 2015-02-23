@@ -8,8 +8,8 @@
 
 	<link rel="stylesheet" href="stylesheets/styles.css">
 	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
-	<!--<link rel="stylesheet" href="stylesheets/HoldToDelete.css">-->
-	<link rel="stylesheet" href="stylesheets/HoldToDelete.min.css">
+	<link rel="stylesheet" href="stylesheets/HoldToDelete.css">
+<!-- 	<link rel="stylesheet" href="stylesheets/HoldToDelete.min.css"> -->
 	<link rel="stylesheet" href="stylesheets/styles-custom.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
@@ -119,9 +119,10 @@
 <pre><code>new HoldToDelete(
   'button',
   {
-    remove_feedback: false,  	   // (Boolean) Specify wether the feedback element should be removed or not
-    class_name: 'custom_class' 	   // (String) A custom class for the clicked element in the current instance
-    border_radius_percentage: true // (Boolean) Specify if the usage of border radius is done through percentages or not
+    remove_feedback: false,  	    // (Boolean) Specify wether the feedback element should be removed or not
+    class_name: 'custom_class',     // (String) A custom class for the clicked element in the current instance
+    border_radius_percentage: true, // (Boolean) Specify if the usage of border radius is done through percentages or not
+    placement: 'bottom'             // (String) The placement of the feedback element. This should either be 'top' or 'bottom'
   }
 );
 </code></pre>
@@ -259,9 +260,7 @@ remove_handler_finished.on('holdtodelete_finished', function(reference_element, 
 
 <ul>
 	<li>Support for even more mobile browsers</li>
-	<li>Better handling regarding border radiuses</li>
 	<li>Cross browser support regarding right click context menus</li>
-	<li>Customization regarding the placement of the feedback element</li>
 	<li>Customization regarding the reference element during the event</li>
 	<li>Better feedback regarding the 'holdtodelete_running' custom event</li>
 </ul>
@@ -277,8 +276,8 @@ remove_handler_finished.on('holdtodelete_finished', function(reference_element, 
 	  </footer>
 	</div>
 	<script src="javascripts/scale.fix.js"></script>
-	<!--<script src="javascripts/HoldToDelete.js"></script>-->
-	<script src="javascripts/HoldToDelete.min.js"></script>
+	<script src="javascripts/HoldToDelete.js"></script>
+	<!--<script src="javascripts/HoldToDelete.min.js"></script>-->
 	<script src="javascripts/main-custom.js"></script>
 	
   </body>
