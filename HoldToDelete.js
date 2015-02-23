@@ -1,10 +1,7 @@
 (function (scope, document) {
     // Initialize function. This function handles the plugin and sets the private variables
     HoldToDelete = function(element, setup){
-        this.dom_elements = this.getDomElements(element);
-        this.options = this.getOptions(setup);
-        this.timeout_settings = this.getTimeoutSettings();
-
+        // Set all the class variables
         this.mouseup_check = false;
         this.reference_element = false;
 
@@ -15,8 +12,27 @@
             'right_click': 2
         };
 
+        // Map the css properties based on the position of the feedback element
+        this.position_css_mapping = {
+            'top': {
+                'border-width': 'border-top-width',
+                'border-left-radius': 'border-top-left-radius',
+                'border-right-radius': 'border-top-right-radius'
+            },
+            'bottom': {
+                'border-width': 'border-bottom-width',
+                'border-left-radius': 'border-bottom-left-radius',
+                'border-right-radius': 'border-bottom-right-radius'
+            }
+        } 
+        
+
         // The classname that the reference element gets while the event is running
         this.classname_running = 'holdtodelete_running';
+
+        this.dom_elements = this.getDomElements(element);
+        this.options = this.getOptions(setup);
+        this.timeout_settings = this.getTimeoutSettings();
 
         if(this.dom_elements){
             this.registerReferenceEvents();
@@ -91,20 +107,37 @@
             timeout: 0,
             remove_feedback: true,
             border_radius_percentage: false,
-            class_name: ''
+            class_name: '',
+            placement: 'top'
         }
 
         if(setup && typeof setup === 'object'){
             for (var option in setup){
                 if(setup.hasOwnProperty(option) && options.hasOwnProperty(option) && typeof options[option] === typeof setup[option]){
-                    options[option] = setup[option];
+
+                    if((option === 'placement' && this.validatePlacement(setup[option])) || option !== 'placement'){
+                        options[option] = setup[option];
+                    } else if(option === 'placement' && !this.validatePlacement(setup[option])){
+                        throw new Error(option + ' was not specified correct. It should be one of the following values: ' + Object.keys(this.position_css_mapping));
+                    }
+
                 } else {
-                    throw new Error(option + ' was not specified properly. It should be the data type ' + typeof options[option]);
+                    throw new Error(option + ' was not specified correct. It should be the data type ' + typeof options[option]);
                 }
             }
         }
-
+ 
         return options;
+    }
+
+    HoldToDelete.prototype.validatePlacement = function(placement){
+        for(var potentional_position in this.position_css_mapping){
+            if(potentional_position === placement){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Check if an object is a DOM element
@@ -120,7 +153,7 @@
     HoldToDelete.prototype.wrapReferenceElements = function(){
     	for(var i = 0; i < this.dom_elements.length; i++){
     		var parent_element = document.createElement('div');
-    		parent_element.className = 'holdtodelete_parent';
+    		parent_element.className = 'holdtodelete_parent holdtodelete_' + this.options.placement;
 
     		var	button = this.dom_elements[i];
 
@@ -329,23 +362,18 @@
     HoldToDelete.prototype.insertFeedbackElement = function(feedback_object){
         var feedback_element = this.constructFeedbackElement();
 
-        if(typeof feedback_object === 'object'){
-            for(var css_rule in feedback_object.css){
-                feedback_element.style.cssText += css_rule + ': ' + feedback_object.css[css_rule] + ';';
-            }
-        }
-        
         if(feedback_object.border_radius != 0){
         	if(feedback_object.hasOwnProperty('border_left_radius')){
-            	feedback_element.style.cssText += 'border-top-left-radius: ' + feedback_object.border_left_radius + 'px;';
+            	feedback_element.style.cssText += this.getCSSPropertyForPlacement('border-left-radius') + ': ' + feedback_object.border_left_radius + 'px;';
 	        }
 
 	        if(feedback_object.hasOwnProperty('border_right_radius')){
-	            feedback_element.style.cssText += 'border-top-right-radius: ' + feedback_object.border_right_radius + 'px;';
+	            feedback_element.style.cssText += this.getCSSPropertyForPlacement('border-right-radius') + ': ' + feedback_object.border_right_radius + 'px;';
 	        }
 
 	        if(feedback_object.hasOwnProperty('border_radius') && feedback_object.border_radius != 0){
-	            feedback_element.style.cssText += 'border-top-width: ' + feedback_object.border_radius + 'px;';
+	            feedback_element.style.cssText += this.getCSSPropertyForPlacement('border-width') + ': ' + feedback_object.border_radius + 'px;';
+                this.setFeedbackWrapperBorderRadius( feedback_object );
 	        }
         }
         
@@ -364,8 +392,8 @@
         feedback_object.width = feedback_object.wrapper.offsetWidth;
 
         if(window.getComputedStyle){
-            feedback_object.border_left_radius = this.formatStringtoNumber(window.getComputedStyle(element, null).getPropertyValue('border-top-left-radius'));
-            feedback_object.border_right_radius = this.formatStringtoNumber(window.getComputedStyle(element, null).getPropertyValue('border-top-right-radius'));
+            feedback_object.border_left_radius = this.formatStringtoNumber(window.getComputedStyle(element, null).getPropertyValue( this.getCSSPropertyForPlacement('border-left-radius') ));
+            feedback_object.border_right_radius = this.formatStringtoNumber(window.getComputedStyle(element, null).getPropertyValue( this.getCSSPropertyForPlacement('border-right-radius') ));
 
             // Choose which one is the largest
             if(feedback_object.border_left_radius >= feedback_object.border_right_radius){
@@ -378,6 +406,16 @@
         }
 
         return feedback_object;
+    }
+
+    // Get the right CSS property for the placement of the feedback element
+    HoldToDelete.prototype.getCSSPropertyForPlacement = function(property){
+        if( this.position_css_mapping.hasOwnProperty(this.options.placement) && this.position_css_mapping[this.options.placement].hasOwnProperty(property) ){
+            console.log(this.position_css_mapping[this.options.placement][property]);
+            return this.position_css_mapping[this.options.placement][property]
+        }
+
+        return false;
     }
 
     // Function to format number with px or % at the end into actual numbers
@@ -393,6 +431,7 @@
         return Number(string_number);
     }
 
+    // Get the height for the proper height for the border radius in pixels if it is set in percentages
     HoldToDelete.prototype.getBorderRadiusHeight = function(width_in_pixels){
     	if(this.options.border_radius_percentage){
     		var width_in_percentages = (width_in_pixels / this.reference_element.offsetWidth) * 100;
@@ -400,6 +439,14 @@
     	}
     	
     	return width_in_pixels;
+    }
+
+    // Set the border radius for the wrapper element
+    HoldToDelete.prototype.setFeedbackWrapperBorderRadius = function(feedback_object){
+        var feedback_wrapper = this.selectFeedbackWrapper(this.reference_element);
+
+        feedback_wrapper.style.cssText += this.getCSSPropertyForPlacement('border-left-radius') + ': ' + feedback_object.border_left_radius + 'px;';
+        feedback_wrapper.style.cssText += this.getCSSPropertyForPlacement('border-right-radius') + ': ' + feedback_object.border_right_radius + 'px;';
     }
 
     // Remove the feedback element from the DOM

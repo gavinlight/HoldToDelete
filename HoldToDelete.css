@@ -1,6 +1,7 @@
 .holdtodelete_parent {
 	display: inline-block;
 	position: relative;
+	overflow: hidden;
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -18,9 +19,18 @@
 	display: block;
 	position: absolute;
 	cursor: pointer;
+	left: 0;
+	border-color: rgb(255, 0, 0);
+}
+
+.holdtodelete_parent.holdtodelete_top .holdtodelete {
 	border-top-style: solid;
 	border-top-width: 5px;
-	border-top-color: rgb(255, 0, 0);
 	top: 0;
-	left: 0;
+}
+
+.holdtodelete_parent.holdtodelete_bottom .holdtodelete {
+	border-bottom-style: solid;
+	border-bottom-width: 5px;
+	bottom: 0;
 }
